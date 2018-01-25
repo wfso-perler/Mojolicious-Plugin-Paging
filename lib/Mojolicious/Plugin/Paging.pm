@@ -2,10 +2,10 @@ package Mojolicious::Plugin::Paging;
 use Mojo::Base 'Mojolicious::Plugin';
 use Mojolicious::Page;
 
-our $VERSION = '0.0.1';
+our $VERSION = '0.0.2';
 
 sub register{
-  my ($self, $app) = @_;
+  my ($self, $app, $conf) = @_;
   if(!Mojolicious::Controller->can('page')){
     Mojolicious::Controller->attr(page => sub{
         my $c = shift;
@@ -15,11 +15,20 @@ sub register{
         $v->optional("pre_page", "trim");
         $v->num;
         my $p = $v->output;
-        return Mojolicious::Page->new(
-          url          => $c->url_with,
-          current_page => $p->{page},
-          pre_page_row => $p->{pre_page}
+        my $page = Mojolicious::Page->new(
+          url => $c->url_with
         );
+        if($p->{page}){
+          $page->current_page($p->{page});
+        }elsif($conf && $conf->{default_start_page}){
+          $page->current_page($conf->{default_start_page});
+        }
+        if($p->{pre_page}){
+          $page->pre_page_row($p->{pre_page});
+        }elsif($conf && $conf->{default_pre_page}){
+          $page->pre_page_row($conf->{default_pre_page});
+        }
+        return $page;
       }
     );
   }
@@ -38,9 +47,14 @@ Mojolicious::Plugin::Paging - Mojolicious paging Plugin
 
   # Mojolicious
   $self->plugin('Paging');
+  
+  $self->plugin('Paging',{
+    default_start_page => 1,
+    default_pre_page => 10
+  });
 
   # Mojolicious::Lite
-  plugin 'Paging';
+  plugin 'Paging',{default_start_page => 1,default_pre_page => 10};
 
 =head1 DESCRIPTION
 
