@@ -16,7 +16,7 @@ sub register{
         $v->num;
         my $p = $v->output;
         my $page = Mojolicious::Page->new(
-          url => $c->url_with
+          url => $c->url_with->to_string
         );
         if($p->{page}){
           $page->current_page($p->{page});
