@@ -2,7 +2,7 @@ package Mojolicious::Plugin::Paging;
 use Mojo::Base 'Mojolicious::Plugin';
 use Mojolicious::Page;
 
-our $VERSION = '0.0.2';
+our $VERSION = '0.1.0';
 
 sub register{
   my ($self, $app, $conf) = @_;
