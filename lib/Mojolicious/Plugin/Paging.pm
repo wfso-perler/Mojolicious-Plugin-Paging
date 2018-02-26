@@ -2,7 +2,7 @@ package Mojolicious::Plugin::Paging;
 use Mojo::Base 'Mojolicious::Plugin';
 use Mojolicious::Page;
 
-our $VERSION = '0.1.0';
+our $VERSION = '0.1.1';
 
 sub register{
   my ($self, $app, $conf) = @_;
@@ -10,11 +10,20 @@ sub register{
     Mojolicious::Controller->attr(page => sub{
         my $c = shift;
         my $v = $c->validation;
+        
+        ## 保存output以备后续恢复
+        my $output = $c->output;
+        $c->output({});
+        
         $v->optional("page", "trim");
         $v->num;
         $v->optional("pre_page", "trim");
         $v->num;
         my $p = $v->output;
+        
+        ## 恢复output，解除分页功能对其他数据的影响
+        $v->output($output);
+        
         my $page = Mojolicious::Page->new(
           url => $c->url_with->to_string
         );
