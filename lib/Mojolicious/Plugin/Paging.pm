@@ -2,7 +2,7 @@ package Mojolicious::Plugin::Paging;
 use Mojo::Base 'Mojolicious::Plugin';
 use Mojolicious::Page;
 
-our $VERSION = '0.1.1';
+our $VERSION = '0.1.2';
 
 sub register{
   my ($self, $app, $conf) = @_;
@@ -12,8 +12,8 @@ sub register{
         my $v = $c->validation;
         
         ## 保存output以备后续恢复
-        my $output = $c->output;
-        $c->output({});
+        my $output = $v->output;
+        $v->output({});
         
         $v->optional("page", "trim");
         $v->num;
